@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LiveWeave - Chat Example</title>
+    <script type="module" src="../liveweave.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .chat-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .chat-header {
+            background: #007bff;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .chat-messages {
+            height: 400px;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .message {
+            margin: 10px 0;
+            padding: 10px 15px;
+            border-radius: 18px;
+            max-width: 70%;
+            word-wrap: break-word;
+        }
+        .message.own {
+            background: #007bff;
+            color: white;
+            margin-left: auto;
+        }
+        .message.other {
+            background: #e9ecef;
+            color: #333;
+        }
+        .message-time {
+            font-size: 0.8em;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+        .chat-input {
+            padding: 20px;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            gap: 10px;
+        }
+        .chat-input input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+        }
+        .chat-input button {
+            padding: 12px 24px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+        }
+        .chat-input button:hover {
+            background: #0056b3;
+        }
+        .typing-indicator {
+            padding: 10px 20px;
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1>LiveWeave Chat</h1>
+            <p>Real-time messaging with cross-tab communication</p>
+        </div>
+        
+        <div class="chat-messages">
+            <lw-for src="/api/messages" select="messages" as="message">
+                <div class="message {{message.own ? 'own' : 'other'}}">
+                    <div class="message-text">{{message.text}}</div>
+                    <div class="message-time">
+                        <lw-time value="{{message.timestamp}}" format="ago"></lw-time>
+                    </div>
+                </div>
+            </lw-for>
+            
+            <lw-if src="/api/typing" test="typing.length > 0">
+                <div class="typing-indicator">
+                    {{typing.join(', ')}} {{typing.length === 1 ? 'is' : 'are'}} typing...
+                </div>
+            </lw-if>
+        </div>
+        
+        <div class="chat-input">
+            <input type="text" id="messageInput" placeholder="Type a message..." maxlength="500">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        // Mock chat data
+        let messages = [
+            {
+                id: 1,
+                text: "Hello! Welcome to LiveWeave Chat!",
+                timestamp: new Date(Date.now() - 300000).toISOString(),
+                own: false,
+                user: "System"
+            },
+            {
+                id: 2,
+                text: "This is a real-time chat example using LiveWeave components.",
+                timestamp: new Date(Date.now() - 240000).toISOString(),
+                own: false,
+                user: "System"
+            }
+        ];
+        
+        let typing = [];
+        let messageId = 3;
+        
+        // Mock API endpoints
+        globalThis.fetch = async (url) => {
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            if (url === '/api/messages') {
+                return {
+                    ok: true,
+                    json: async () => ({ messages })
+                };
+            }
+            
+            if (url === '/api/typing') {
+                return {
+                    ok: true,
+                    json: async () => ({ typing })
+                };
+            }
+            
+            return { ok: false, status: 404 };
+        };
+        
+        // Send message function
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const text = input.value.trim();
+            
+            if (!text) return;
+            
+            const message = {
+                id: messageId++,
+                text,
+                timestamp: new Date().toISOString(),
+                own: true,
+                user: 'You'
+            };
+            
+            messages.push(message);
+            input.value = '';
+            
+            // Update typing indicator
+            typing = typing.filter(user => user !== 'You');
+            
+            // Simulate response after 1-3 seconds
+            setTimeout(() => {
+                const responses = [
+                    "That's interesting!",
+                    "I see what you mean.",
+                    "Thanks for sharing!",
+                    "Great point!",
+                    "I agree with you."
+                ];
+                
+                const response = {
+                    id: messageId++,
+                    text: responses[Math.floor(Math.random() * responses.length)],
+                    timestamp: new Date().toISOString(),
+                    own: false,
+                    user: 'Bot'
+                };
+                
+                messages.push(response);
+            }, 1000 + Math.random() * 2000);
+        }
+        
+        // Handle Enter key
+        document.getElementById('messageInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        // Simulate typing indicators
+        setInterval(() => {
+            if (Math.random() > 0.7) {
+                typing = ['Alice', 'Bob', 'Charlie'].filter(() => Math.random() > 0.5);
+            } else {
+                typing = [];
+            }
+        }, 3000);
+        
+        // Auto-scroll to bottom
+        const chatMessages = document.querySelector('.chat-messages');
+        const observer = new MutationObserver(() => {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        });
+        observer.observe(chatMessages, { childList: true, subtree: true });
+    </script>
+</body>
+</html>

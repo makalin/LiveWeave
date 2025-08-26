@@ -1,0 +1,64 @@
+{
+  "name": "liveweave",
+  "version": "0.1.0",
+  "description": "Tiny realtime HTML layer for modern browsers",
+  "main": "liveweave.js",
+  "module": "liveweave.js",
+  "unpkg": "liveweave.min.js",
+  "jsdelivr": "liveweave.min.js",
+  "files": [
+    "liveweave.js",
+    "liveweave.min.js"
+  ],
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "build": "node build.js",
+    "dev": "node --watch build.js",
+    "lint": "eslint src/ tests/",
+    "lint:fix": "eslint src/ tests/ --fix",
+    "format": "prettier --write .",
+    "docs": "jsdoc -c jsdoc.json"
+  },
+  "keywords": [
+    "realtime",
+    "html",
+    "websocket",
+    "sse",
+    "web-components",
+    "custom-elements",
+    "live-updates",
+    "streaming"
+  ],
+  "author": "LiveWeave Contributors",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/liveweave.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/liveweave/issues"
+  },
+  "homepage": "https://github.com/yourusername/liveweave#readme",
+  "devDependencies": {
+    "@babel/core": "^7.23.0",
+    "@babel/preset-env": "^7.23.0",
+    "eslint": "^8.50.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-jest": "^27.4.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "prettier": "^3.0.3",
+    "terser": "^5.19.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "browserslist": [
+    "Chrome >= 114",
+    "Edge >= 114",
+    "Firefox >= 115",
+    "Safari >= 16"
+  ]
+}

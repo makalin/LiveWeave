@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LiveWeave - Basic Example</title>
+    <script type="module" src="../liveweave.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .component {
+            border: 1px solid #e1e5e9;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            background: #f8f9fa;
+        }
+        .component h3 {
+            margin-top: 0;
+            color: #495057;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            background: #e9ecef;
+            margin: 10px 0;
+        }
+        .online { background: #d4edda; color: #155724; }
+        .offline { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>LiveWeave Basic Example</h1>
+    <p>This example demonstrates the basic LiveWeave components with mock data.</p>
+
+    <div class="component">
+        <h3>Real-time Text Updates</h3>
+        <p>Status: <lw-text src="/api/status" select="status.message" loading="Loading status..." error="Failed to load status"></lw-text></p>
+    </div>
+
+    <div class="component">
+        <h3>Real-time HTML Updates</h3>
+        <lw-html src="/api/dashboard" select="html" loading="Loading dashboard..." error="Failed to load dashboard"></lw-html>
+    </div>
+
+    <div class="component">
+        <h3>Real-time List Updates</h3>
+        <lw-for src="/api/users" select="users" as="user">
+            <div class="status">
+                <strong>{{user.name}}</strong> - {{user.email}}
+                <br><small>Last seen: {{user.lastSeen}}</small>
+            </div>
+        </lw-for>
+    </div>
+
+    <div class="component">
+        <h3>Conditional Content</h3>
+        <lw-if src="/api/status" test="user.isOnline">
+            <div class="status online">🟢 User is online</div>
+        </lw-if>
+        <lw-if src="/api/status" test="!user.isOnline">
+            <div class="status offline">🔴 User is offline</div>
+        </lw-if>
+    </div>
+
+    <div class="component">
+        <h3>Real-time Timestamps</h3>
+        <p>Page loaded: <lw-time value="2024-01-01T00:00:00Z" format="ago"></lw-time></p>
+        <p>Current time: <lw-time format="formatted"></lw-time></p>
+    </div>
+
+    <div class="component">
+        <h3>Signals and Cross-tab Communication</h3>
+        <lw-on name="userStatus">
+            <div class="status">
+                Signal data: {{$signal.status}}
+            </div>
+        </lw-on>
+        <button onclick="updateStatus()">Update Status</button>
+        <button onclick="clearStatus()">Clear Status</button>
+    </div>
+
+    <div class="component">
+        <h3>Live Form Submission</h3>
+        <form is="lw-form" live action="/api/submit" method="POST">
+            <input type="text" name="message" placeholder="Enter a message" required>
+            <button type="submit">Send</button>
+        </form>
+    </div>
+
+    <script>
+        // Mock API endpoints for demonstration
+        const mockData = {
+            '/api/status': { status: { message: 'System is running smoothly' }, user: { isOnline: true } },
+            '/api/dashboard': { html: '<div class="status online">Dashboard loaded successfully!</div>' },
+            '/api/users': { 
+                users: [
+                    { name: 'Alice', email: 'alice@example.com', lastSeen: '2 minutes ago' },
+                    { name: 'Bob', email: 'bob@example.com', lastSeen: '5 minutes ago' },
+                    { name: 'Charlie', email: 'charlie@example.com', lastSeen: '1 hour ago' }
+                ]
+            }
+        };
+
+        // Mock fetch for demonstration
+        globalThis.fetch = async (url) => {
+            await new Promise(resolve => setTimeout(resolve, 100)); // Simulate network delay
+            
+            const data = mockData[url];
+            if (data) {
+                return {
+                    ok: true,
+                    json: async () => data
+                };
+            }
+            
+            return {
+                ok: false,
+                status: 404
+            };
+        };
+
+        // Signal functions
+        function updateStatus() {
+            lwSignal('userStatus', 'set', { status: 'Updated at ' + new Date().toLocaleTimeString() });
+        }
+
+        function clearStatus() {
+            lwSignal('userStatus', 'clear');
+        }
+
+        // Simulate real-time updates
+        setInterval(() => {
+            mockData['/api/status'].status.message = 'System updated at ' + new Date().toLocaleTimeString();
+        }, 5000);
+    </script>
+</body>
+</html>

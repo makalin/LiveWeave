@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LiveWeave - Advanced Features Demo</title>
+    <script type="module" src="../liveweave.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background: #f8f9fa;
+        }
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .section h2 {
+            color: #495057;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .card {
+            border: 1px solid #e1e5e9;
+            border-radius: 8px;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .card h3 {
+            margin-top: 0;
+            color: #495057;
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .btn-success { background: #28a745; }
+        .btn-warning { background: #ffc107; color: #212529; }
+        .btn-danger { background: #dc3545; }
+        
+        /* Validation styles */
+        .lw-valid { border-color: #28a745; }
+        .lw-invalid { border-color: #dc3545; }
+        .lw-error-message {
+            color: #dc3545;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        
+        /* Chart container */
+        .chart-container {
+            height: 300px;
+            border: 1px solid #e1e5e9;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        /* Animation preview */
+        .animation-preview {
+            min-height: 100px;
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8f9fa;
+            margin: 10px 0;
+        }
+        
+        /* Form styles */
+        .form-group {
+            margin: 15px 0;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+        }
+    </style>
+</head>
+<body>
+    <h1>🚀 LiveWeave Advanced Features Demo</h1>
+    <p>This demo showcases the advanced capabilities of LiveWeave including animations, charts, data transformations, and validation.</p>
+
+    <!-- Animation Component -->
+    <div class="section">
+        <h2>🎭 Animated Content Updates</h2>
+        <p>Content updates with smooth animations and transitions.</p>
+        
+        <div class="grid">
+            <div class="card">
+                <h3>Fade Animation</h3>
+                <lw-animate src="/api/animated-content" animation="fade" duration="500">
+                    <div class="animation-preview">
+                        <h4>Fade Animation</h4>
+                        <p>This content will fade in/out when updated</p>
+                    </div>
+                </lw-animate>
+                <button class="btn" onclick="triggerAnimation('fade')">Trigger Fade</button>
+            </div>
+            
+            <div class="card">
+                <h3>Slide Animation</h3>
+                <lw-animate src="/api/animated-content" animation="slide" duration="800">
+                    <div class="animation-preview">
+                        <h4>Slide Animation</h4>
+                        <p>This content will slide up/down when updated</p>
+                    </div>
+                </lw-animate>
+                <button class="btn" onclick="triggerAnimation('slide')">Trigger Slide</button>
+            </div>
+            
+            <div class="card">
+                <h3>Typewriter Effect</h3>
+                <lw-animate src="/api/animated-content" animation="typewriter" duration="2000">
+                    <div class="animation-preview">
+                        <h4>Typewriter Effect</h4>
+                        <p>This content will be typed out character by character</p>
+                    </div>
+                </lw-animate>
+                <button class="btn" onclick="triggerAnimation('typewriter')">Trigger Typewriter</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart Component -->
+    <div class="section">
+        <h2>📊 Real-time Charts</h2>
+        <p>Dynamic charts that update in real-time from data sources.</p>
+        
+        <div class="grid">
+            <div class="card">
+                <h3>Line Chart</h3>
+                <div class="chart-container">
+                    <lw-chart src="/api/chart-data" type="line" select="lineData"></lw-chart>
+                </div>
+                <button class="btn" onclick="updateChartData()">Update Data</button>
+                <button class="btn btn-warning" onclick="changeChartType('line')">Line</button>
+            </div>
+            
+            <div class="card">
+                <h3>Bar Chart</h3>
+                <div class="chart-container">
+                    <lw-chart src="/api/chart-data" type="bar" select="barData"></lw-chart>
+                </div>
+                <button class="btn" onclick="updateChartData()">Update Data</button>
+                <button class="btn btn-warning" onclick="changeChartType('bar')">Bar</button>
+            </div>
+            
+            <div class="card">
+                <h3>Pie Chart</h3>
+                <div class="chart-container">
+                    <lw-chart src="/api/chart-data" type="pie" select="pieData"></lw-chart>
+                </div>
+                <button class="btn" onclick="updateChartData()">Update Data</button>
+                <button class="btn btn-warning" onclick="changeChartType('pie')">Pie</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Transformation Component -->
+    <div class="section">
+        <h2>🔄 Data Transformations</h2>
+        <p>Advanced data filtering, sorting, and grouping capabilities.</p>
+        
+        <div class="grid">
+            <div class="card">
+                <h3>Filtered & Sorted Data</h3>
+                <lw-transform src="/api/user-data" select="users" filter="age >= 25" sort="name:asc" limit="5">
+                    <div class="user-item">
+                        <strong>{{name}}</strong> - Age: {{age}}, Email: {{email}}
+                    </div>
+                </lw-transform>
+                <button class="btn" onclick="updateUserData()">Refresh Data</button>
+            </div>
+            
+            <div class="card">
+                <h3>Grouped Data</h3>
+                <lw-transform src="/api/user-data" select="users" group-by="department">
+                    <div class="department-group">
+                        <h4>{{key}} ({{count}} users)</h4>
+                        <div class="user-list">
+                            <div class="user-item" lw-for="items" as="user">
+                                {{user.name}} - {{user.role}}
+                            </div>
+                        </div>
+                    </div>
+                </lw-transform>
+            </div>
+            
+            <div class="card">
+                <h3>Mapped Data</h3>
+                <lw-transform src="/api/user-data" select="users" map="{name: name.toUpperCase(), displayName: name + ' (' + role + ')'}">
+                    <div class="user-display">
+                        <strong>{{displayName}}</strong>
+                    </div>
+                </lw-transform>
+            </div>
+        </div>
+    </div>
+
+    <!-- Advanced Form Validation -->
+    <div class="section">
+        <h2>✅ Advanced Form Validation</h2>
+        <p>Real-time form validation with custom rules and visual feedback.</p>
+        
+        <form is="lw-form" live action="/api/submit" method="POST">
+            <lw-validate rules='{"username": ["required", ["minLength", 3], "unique"], "email": ["required", "email"], "password": ["required", ["minLength", 8], "password-strength"], "phone": ["phone"], "postalCode": ["postal-code"]}'>
+                
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Enter username">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Enter email">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter password">
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <input type="tel" id="phone" name="phone" placeholder="Enter phone number">
+                </div>
+                
+                <div class="form-group">
+                    <label for="postalCode">Postal Code</label>
+                    <input type="text" id="postalCode" name="postalCode" placeholder="Enter postal code">
+                </div>
+                
+                <button type="submit" class="btn btn-success">Submit Form</button>
+                <button type="button" class="btn btn-warning" onclick="clearValidation()">Clear Validation</button>
+            </lw-validate>
+        </form>
+    </div>
+
+    <!-- Performance Monitoring -->
+    <div class="section">
+        <h2>📈 Performance Monitoring</h2>
+        <p>Real-time performance metrics and monitoring.</p>
+        
+        <div class="grid">
+            <div class="card">
+                <h3>Cache Statistics</h3>
+                <lw-on name="cacheStats">
+                    <div>
+                        <p><strong>Cache Size:</strong> {{$signal.size}} / {{$signal.maxSize}}</p>
+                        <p><strong>Hit Rate:</strong> {{$signal.hitRate}}</p>
+                        <p><strong>Hits:</strong> {{$signal.hits}}</p>
+                        <p><strong>Misses:</strong> {{$signal.misses}}</p>
+                    </div>
+                </lw-on>
+                <button class="btn" onclick="updateCacheStats()">Update Stats</button>
+                <button class="btn btn-danger" onclick="clearCache()">Clear Cache</button>
+            </div>
+            
+            <div class="card">
+                <h3>Performance Metrics</h3>
+                <lw-on name="performanceMetrics">
+                    <div>
+                        <p><strong>Response Time:</strong> {{$signal.responseTime}}ms</p>
+                        <p><strong>Memory Usage:</strong> {{$signal.memoryUsage}}MB</p>
+                        <p><strong>Active Connections:</strong> {{$signal.activeConnections}}</p>
+                    </div>
+                </lw-on>
+                <button class="btn" onclick="updatePerformanceMetrics()">Update Metrics</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock API endpoints for demonstration
+        const mockData = {
+            '/api/animated-content': {
+                fade: '<div class="animation-preview"><h4>Updated Content!</h4><p>This content was updated with fade animation</p></div>',
+                slide: '<div class="animation-preview"><h4>Updated Content!</h4><p>This content was updated with slide animation</p></div>',
+                typewriter: '<div class="animation-preview"><h4>Updated Content!</h4><p>This content was updated with typewriter effect</p></div>'
+            },
+            '/api/chart-data': {
+                lineData: [
+                    { value: Math.random() * 100 },
+                    { value: Math.random() * 100 },
+                    { value: Math.random() * 100 },
+                    { value: Math.random() * 100 },
+                    { value: Math.random() * 100 }
+                ],
+                barData: [
+                    { value: Math.random() * 100 },
+                    { value: Math.random() * 100 },
+                    { value: Math.random() * 100 },
+                    { value: Math.random() * 100 },
+                    { value: Math.random() * 100 }
+                ],
+                pieData: [
+                    { value: Math.random() * 100 },
+                    { value: Math.random() * 100 },
+                    { value: Math.random() * 100 },
+                    { value: Math.random() * 100 }
+                ]
+            },
+            '/api/user-data': {
+                users: [
+                    { name: 'Alice Johnson', age: 28, email: 'alice@example.com', role: 'Developer', department: 'Engineering' },
+                    { name: 'Bob Smith', age: 32, email: 'bob@example.com', role: 'Designer', department: 'Design' },
+                    { name: 'Charlie Brown', age: 25, email: 'charlie@example.com', role: 'Manager', department: 'Management' },
+                    { name: 'Diana Prince', age: 30, email: 'diana@example.com', role: 'Developer', department: 'Engineering' },
+                    { name: 'Eve Wilson', age: 27, email: 'eve@example.com', role: 'Designer', department: 'Design' }
+                ]
+            }
+        };
+
+        // Mock fetch for demonstration
+        globalThis.fetch = async (url) => {
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            const data = mockData[url];
+            if (data) {
+                return {
+                    ok: true,
+                    json: async () => data
+                };
+            }
+            
+            return {
+                ok: false,
+                status: 404
+            };
+        };
+
+        // Animation functions
+        function triggerAnimation(type) {
+            const elements = document.querySelectorAll('lw-animate');
+            elements.forEach(element => {
+                if (element.getAttribute('animation') === type) {
+                    element.animate(type, 1000);
+                }
+            });
+        }
+
+        // Chart functions
+        function updateChartData() {
+            mockData['/api/chart-data'].lineData = Array.from({length: 5}, () => ({ value: Math.random() * 100 }));
+            mockData['/api/chart-data'].barData = Array.from({length: 5}, () => ({ value: Math.random() * 100 }));
+            mockData['/api/chart-data'].pieData = Array.from({length: 4}, () => ({ value: Math.random() * 100 }));
+        }
+
+        function changeChartType(type) {
+            const charts = document.querySelectorAll('lw-chart');
+            charts.forEach(chart => chart.changeType(type));
+        }
+
+        // Data functions
+        function updateUserData() {
+            mockData['/api/user-data'].users = [
+                { name: 'Frank Miller', age: 29, email: 'frank@example.com', role: 'Developer', department: 'Engineering' },
+                { name: 'Grace Lee', age: 31, email: 'grace@example.com', role: 'Designer', department: 'Design' },
+                { name: 'Henry Davis', age: 26, email: 'henry@example.com', role: 'Manager', department: 'Management' }
+            ];
+        }
+
+        // Validation functions
+        function clearValidation() {
+            const validator = document.querySelector('lw-validate');
+            if (validator) {
+                validator.clearValidation();
+            }
+        }
+
+        // Cache and performance functions
+        function updateCacheStats() {
+            lwSignal('cacheStats', 'set', {
+                size: Math.floor(Math.random() * 50) + 10,
+                maxSize: 100,
+                hitRate: (Math.random() * 0.3 + 0.7).toFixed(4),
+                hits: Math.floor(Math.random() * 1000) + 500,
+                misses: Math.floor(Math.random() * 200) + 50
+            });
+        }
+
+        function clearCache() {
+            lwSignal('cacheStats', 'set', {
+                size: 0,
+                maxSize: 100,
+                hitRate: '0.0000',
+                hits: 0,
+                misses: 0
+            });
+        }
+
+        function updatePerformanceMetrics() {
+            lwSignal('performanceMetrics', 'set', {
+                responseTime: Math.floor(Math.random() * 200) + 50,
+                memoryUsage: (Math.random() * 100 + 50).toFixed(2),
+                activeConnections: Math.floor(Math.random() * 20) + 5
+            });
+        }
+
+        // Initialize demo data
+        updateCacheStats();
+        updatePerformanceMetrics();
+        
+        // Update data periodically
+        setInterval(updateChartData, 5000);
+        setInterval(updateCacheStats, 3000);
+        setInterval(updatePerformanceMetrics, 4000);
+    </script>
+</body>
+</html>
